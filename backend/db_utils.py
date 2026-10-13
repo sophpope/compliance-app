@@ -1,12 +1,7 @@
-from fastapi import FastAPI
 from sqlalchemy import create_engine, NullPool
 from dotenv import load_dotenv
 import os
-app = FastAPI()
 
-@app.get("/")
-def root():
-    return {"message": "Complaince API is running!"}
 
 # Loading enviroment from .env
 load_dotenv()
