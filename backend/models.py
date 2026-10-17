@@ -170,3 +170,88 @@ class CheckResponseCreate(SQLModel):
 
 # Public Models 
 
+class UserPublic(SQLModel):
+    id: UUID
+    name: str
+    email: str
+    created_at: datetime
+
+class ProfilePublic(SQLModel):
+    id: UUID
+    account_id: UUID
+    first_name: str
+    last_name: str
+    email: str
+    role: str
+    created_at: datetime
+
+class PropertyPublic(SQLModel):
+    id: UUID
+    account_id: UUID
+    property_name: str
+    address_1: str
+    address_2: str | None = None
+    city: str
+    county: str
+    postcode: str
+    description: str | None = None
+    is_active: bool
+    created_at: datetime    
+
+class ChecklistTemplatePublic(SQLModel): 
+    id: UUID
+    account_id: UUID | None = None
+    checklist_name: str
+    description: str | None = None
+    is_default: bool
+    is_active: bool
+    created_at: datetime
+
+class TemplateVersionPublic(SQLModel):
+    id: UUID
+    template_id: UUID
+    version_number: int
+    status: str
+    template_data: str  # JSONB data as string
+    created_by: UUID
+    created_at: datetime
+
+class PropertyAssetPublic(SQLModel):
+    id: UUID
+    property_id: UUID
+    asset_name: str
+    asset_type: str
+    asset_variation: str
+    location: str
+    description: str | None = None
+    expiry_date: datetime | None = None
+    installation_date: datetime | None = None
+    last_service_date: datetime | None = None
+    is_active: bool
+    created_at: datetime
+
+class PropertyChecklistPublic(SQLModel):
+    id: UUID
+    property_id: UUID
+    template_version_id: UUID
+    is_active: bool
+    created_at: datetime
+
+class CheckPublic(SQLModel):
+    id: UUID
+    property_checklist_id: UUID
+    submitted_by: UUID | None = None
+    submitted_at: datetime | None = None
+    status: str
+
+class CheckResponsePublic(SQLModel):
+    id: UUID
+    check_id: UUID
+    item_id: str
+    asset_id: UUID | None = None
+    response_value: str
+    notes: str | None = None
+    created_at: datetime
+
+
+
