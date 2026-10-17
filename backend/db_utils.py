@@ -1,6 +1,10 @@
 from sqlalchemy import create_engine, NullPool
+from sqlmodel import SQLModel, Session
 from dotenv import load_dotenv
 import os
+from typing import Annotated
+from fastapi import Depends
+
 
 
 # Loading enviroment from .env
@@ -18,9 +22,9 @@ DATABASE_URL = f"postgresql+psycopg2://{USER}:{PASSWORD}@{HOST}:{PORT}/{DB_NAME}
 
 engine = create_engine(DATABASE_URL, poolclass=NullPool)
 
-try:
-    with engine.connect() as connection:
-        print("Database connection successful!")
-except Exception as e:
-    print(f"Database connection failed to {e}")
+def get_session():
+    with Session(engine) as session:
+        yield session
+
+SessionDep = Annotated[Session, Depends(get_session)]
 
