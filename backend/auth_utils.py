@@ -7,8 +7,8 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
 load_dotenv()
 
-SUPABASE_URL = os.getenv("supbase_url")
-SUPABASE_PUBLISHABLE_KEY = os.getenv("supbase_publishable_key")
+SUPABASE_URL = os.getenv("supabase_url")
+SUPABASE_PUBLISHABLE_KEY = os.getenv("supabase_publishable_key")
 
 if not SUPABASE_URL:
     raise ValueError("SUPABASE_URL is missing")
@@ -38,3 +38,4 @@ def get_current_user(
     except Exception:
         raise HTTPException(status_code=401, detail="Invalid or expired token"
 )
+    
