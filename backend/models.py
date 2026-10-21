@@ -1,31 +1,31 @@
-from uuid import UUID
-from datetime import datetime
+from uuid import UUID, uuid4
+from datetime import datetime, timezone
 
 from sqlmodel import SQLModel, Field
 
 class Accounts(SQLModel, table=True):
     __tablename__ = "accounts"
 
-    id: UUID = Field(default=None, primary_key=True)
+    id: UUID = Field(default_factory=uuid4, primary_key=True)
     name: str = Field(index=True, nullable=False, unique=True)
     email: str = Field(index=True, nullable=False, unique=True)
-    created_at: datetime = Field(default_factory=datetime.utcnow, nullable=False)
+    created_at: datetime = Field(default_factory=lambda:datetime.now(timezone.utc), nullable=False)
 
 class Profiles(SQLModel, table=True):
     __tablename__ = "profiles"
 
-    id: UUID = Field(default=None, primary_key=True)
+    id: UUID = Field(default_factory=uuid4, primary_key=True)
     account_id: UUID = Field(foreign_key="accounts.id", nullable=False)
     first_name: str = Field(nullable=False)
     last_name: str = Field(nullable=False)
     email: str = Field(index=True, nullable=False, unique=True)
     role: str = Field(nullable=False)
-    created_at: datetime = Field(default_factory=datetime.utcnow, nullable=False)
+    created_at: datetime = Field(default_factory=lambda:datetime.now(timezone.utc), nullable=False)
 
 class Properties(SQLModel, table=True):
     __tablename__ = "properties"
 
-    id: UUID = Field(default=None, primary_key=True)
+    id: UUID = Field(default_factory=uuid4, primary_key=True)
     account_id: UUID = Field(foreign_key="accounts.id", nullable=False)
     property_name: str = Field(nullable=False)
     address_1: str = Field(nullable=False)
@@ -35,34 +35,34 @@ class Properties(SQLModel, table=True):
     postcode: str = Field(nullable=False)
     description: str = Field(nullable=True)
     is_active: bool = Field(default=True, nullable=False)
-    created_at: datetime = Field(default_factory=datetime.utcnow, nullable=False)
+    created_at: datetime = Field(default_factory=lambda:datetime.now(timezone.utc), nullable=False)
 
 class ChecklistTemplates(SQLModel, table=True):
     __tablename__ = "checklist_templates"
 
-    id: UUID = Field(default=None, primary_key=True)
+    id: UUID = Field(default_factory=uuid4, primary_key=True)
     account_id: UUID = Field(foreign_key="accounts.id", nullable=True)
     checklist_name: str = Field(nullable=False)
     description: str = Field(nullable=True)
     is_default: bool = Field(default=False, nullable=False)
     is_active: bool = Field(default=True, nullable=False)
-    created_at: datetime = Field(default_factory=datetime.utcnow, nullable=False)
+    created_at: datetime = Field(default_factory=lambda:datetime.now(timezone.utc), nullable=False)
 
 class TemplateVersions(SQLModel, table=True):
     __tablename__ = "template_versions"
 
-    id: UUID = Field(default=None, primary_key=True)
+    id: UUID = Field(default_factory=uuid4, primary_key=True)
     template_id: UUID = Field(foreign_key="checklist_templates.id", nullable=False)
     version_number: int = Field(nullable=False)
     status: str = Field(nullable=False)
     template_data: str = Field(nullable=False)  # JSONB data as string
     created_by: UUID = Field(foreign_key="profiles.id", nullable=False)
-    created_at: datetime = Field(default_factory=datetime.utcnow, nullable=False)
+    created_at: datetime = Field(default_factory=lambda:datetime.now(timezone.utc), nullable=False)
 
 class PropertyAssets(SQLModel, table=True):
     __tablename__ = "property_assets"
 
-    id: UUID = Field(default=None, primary_key=True)
+    id: UUID = Field(default_factory=uuid4, primary_key=True)
     property_id: UUID = Field(foreign_key="properties.id", nullable=False)
     asset_name: str = Field(nullable=False)
     asset_type: str = Field(nullable=False)
@@ -73,21 +73,21 @@ class PropertyAssets(SQLModel, table=True):
     installation_date: datetime = Field(nullable=True)
     last_service_date: datetime = Field(nullable=True)
     is_active: bool = Field(default=True, nullable=False)
-    created_at: datetime = Field(default_factory=datetime.utcnow, nullable=False)
+    created_at: datetime = Field(default_factory=lambda:datetime.now(timezone.utc), nullable=False)
 
 class PropertyChecklists(SQLModel, table=True):
     __tablename__ = "property_checklists"
 
-    id: UUID = Field(default=None, primary_key=True)
+    id: UUID = Field(default_factory=uuid4, primary_key=True)
     property_id: UUID = Field(foreign_key="properties.id", nullable=False)
     template_version_id: UUID = Field(foreign_key="template_versions.id", nullable=False)
     is_active: bool = Field(default=True, nullable=False)
-    created_at: datetime = Field(default_factory=datetime.utcnow, nullable=False)
+    created_at: datetime = Field(default_factory=lambda:datetime.now(timezone.utc), nullable=False)
 
 class Checks(SQLModel, table=True):
     __tablename__ = "checks"
 
-    id: UUID = Field(default=None, primary_key=True)
+    id: UUID = Field(default_factory=uuid4, primary_key=True)
     property_checklist_id: UUID = Field(foreign_key="property_checklists.id", nullable=False)
     submitted_by: UUID = Field(foreign_key="profiles.id", nullable=True)
     submitted_at: datetime = Field(nullable=True)
@@ -96,13 +96,13 @@ class Checks(SQLModel, table=True):
 class CheckResponses(SQLModel, table=True):
     __tablename__ = "check_responses"
 
-    id: UUID = Field(default=None, primary_key=True)
+    id: UUID = Field(default_factory=uuid4, primary_key=True)
     check_id: UUID = Field(foreign_key="checks.id", nullable=False)
     item_id: str = Field(nullable=False)
     asset_id: UUID = Field(foreign_key="property_assets.id", nullable=True)
     response_value: str = Field(nullable=False)
     notes: str = Field(nullable=True)
-    created_at: datetime = Field(default_factory=datetime.utcnow, nullable=False)
+    created_at: datetime = Field(default_factory=lambda:datetime.now(timezone.utc), nullable=False)
 
 
 # models for post requests - adding new data to the database 
@@ -119,7 +119,6 @@ class ProfileCreate(SQLModel):
     role: str
 
 class PropertyCreate(SQLModel):
-    account_id: UUID 
     property_name: str
     address_1: str
     address_2: str | None = None
