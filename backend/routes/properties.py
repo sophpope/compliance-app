@@ -52,3 +52,33 @@ def get_property(property_id: UUID, current_profile: CurrentProfileDep, session:
         print("GET PROPERTY ERROR:", repr(e))
 
         raise HTTPException(status_code=404, detail="Unable to retrieve property")
+    
+@router.patch("/property/{property_id}", response_model=models.PropertyPublic)
+def update_property(
+    property_id: UUID, 
+    property_data: models.PropertyUpdate, 
+    current_profile: CurrentProfileDep, 
+    session: SessionDep
+):
+    try:
+        property = session.exec(select(models.Properties).where(
+            models.Properties.id == property_id, 
+            models.Properties.account_id == current_profile.account_id)).first()
+        
+        if property is None:
+            raise HTTPException(status_code=404, detail="Property not found")
+        
+        update_data = property_data.model_dump(exclude_unset=True)
+
+        for key, value in update_data.items():
+            setattr(property, key, value)
+
+        session.add(property)
+        session.commit()
+        session.refresh(property)
+
+        return property
+    
+    except Exception as e:
+        print("UPDATE PROPERTY ERROR:", repr(e))
+        raise HTTPException(status_code=400, detail="Unable to update property")
