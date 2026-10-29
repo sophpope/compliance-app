@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import select
 from uuid import UUID
 
@@ -37,3 +37,18 @@ def get_my_properties(current_profile: CurrentProfileDep, session: SessionDep):
         return properties
     except Exception as e:
         return {"error": str(e)}
+    
+@router.get('/property/{property_id}', response_model=models.PropertyPublic)
+def get_property(property_id: UUID, current_profile: CurrentProfileDep, session: SessionDep):
+    try:
+        property = session.exec(select(models.Properties).where(models.Properties.id == property_id, models.Properties.account_id == current_profile.account_id)).first()
+        if property is None:
+            raise HTTPException(status_code=404, detail="Property not found")
+        if property.account_id != current_profile.account_id:
+            raise HTTPException(status_code=403, detail="You do not have access to this property")
+        return property
+    
+    except Exception as e:
+        print("GET PROPERTY ERROR:", repr(e))
+
+        raise HTTPException(status_code=404, detail="Unable to retrieve property")
