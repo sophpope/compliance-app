@@ -252,5 +252,47 @@ class CheckResponsePublic(SQLModel):
     notes: str | None = None
     created_at: datetime
 
+# Update models
 
+class PropertyUpdate(SQLModel):
+    property_name: str | None = None
+    address_1: str | None = None
+    address_2: str | None = None
+    city: str | None = None
+    county: str | None = None
+    postcode: str | None = None
+    description: str | None = None
+    is_active: bool | None = None
+
+class AccountUpdate(SQLModel):
+    name: str | None = None
+    email: str | None = None
+
+class ProfileUpdate(SQLModel):
+    first_name: str | None = None
+    last_name: str | None = None
+    email: str | None = None
+    role: str | None = None
+
+class ChecklistTemplateUpdate(SQLModel):
+    checklist_name: str | None = None
+    description: str | None = None
+    is_default: bool | None = None
+    is_active: bool | None = None
+
+class TemplateVersionUpdate(SQLModel):
+    version_number: int | None = None
+    status: str | None = None
+    template_data: str | None = None
+
+class PropertyAssetUpdate(SQLModel):
+    asset_name: str | None = None
+    asset_type: str | None = None
+    asset_variation: str | None = None
+    location: str | None = None
+    description: str | None = None
+    expiry_date: datetime | None = None
+    installation_date: datetime | None = None
+    last_service_date: datetime | None = None
+    is_active: bool | None = None
 
