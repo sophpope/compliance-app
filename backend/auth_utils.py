@@ -3,7 +3,7 @@ import os
 from dotenv import load_dotenv
 from supabase import create_client
 from fastapi import Depends, HTTPException
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials, OAuth2PasswordBearer
 import models
 from db_utils import SessionDep
 from uuid import UUID
@@ -25,12 +25,9 @@ supabase = create_client(
     SUPABASE_PUBLISHABLE_KEY
 )
 
-security = HTTPBearer()
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
-def get_current_user(
-    credentials: HTTPAuthorizationCredentials = Depends(security)
-):
-    token = credentials.credentials
+def get_current_user(token: str = Depends(oauth2_scheme)):
     try:
         response = supabase.auth.get_user(token)
 
@@ -42,6 +39,24 @@ def get_current_user(
     except Exception:
         raise HTTPException(status_code=401, detail="Invalid or expired token"
 )
+    
+#security = HTTPBearer()
+
+# def get_current_user(
+#     credentials: HTTPAuthorizationCredentials = Depends(security)
+# ):
+#     token = credentials.credentials
+#     try:
+#         response = supabase.auth.get_user(token)
+
+#         if not response.user:
+#             raise HTTPException(status_code=401, detail="Invalid token")
+        
+#         return response.user
+    
+#     except Exception:
+#         raise HTTPException(status_code=401, detail="Invalid or expired token"
+# )
     
 def get_current_profile(session: SessionDep, current_user=Depends(get_current_user)):
     profile = session.get(models.Profiles, UUID(str(current_user.id)))
