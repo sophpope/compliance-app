@@ -1,5 +1,5 @@
 from uuid import UUID, uuid4
-from datetime import datetime, timezone
+from datetime import datetime, timezone, date
 
 from sqlmodel import SQLModel, Field
 
@@ -66,12 +66,12 @@ class PropertyAssets(SQLModel, table=True):
     property_id: UUID = Field(foreign_key="properties.id", nullable=False)
     asset_name: str = Field(nullable=False)
     asset_type: str = Field(nullable=False)
-    asset_variation: str = Field(nullable=False)
+    asset_variant: str = Field(nullable=False)
     location: str = Field(nullable=False)
     description: str = Field(nullable=True)
-    expiry_date: datetime = Field(nullable=True)
-    installation_date: datetime = Field(nullable=True)
-    last_service_date: datetime = Field(nullable=True)
+    expiry_date: date = Field(nullable=True)
+    installation_date: date = Field(nullable=True)
+    last_service_date: date = Field(nullable=True)
     is_active: bool = Field(default=True, nullable=False)
     created_at: datetime = Field(default_factory=lambda:datetime.now(timezone.utc), nullable=False)
 
@@ -141,15 +141,14 @@ class TemplateVersionCreate(SQLModel):
     created_by: UUID
 
 class PropertyAssetCreate(SQLModel):
-    property_id: UUID
     asset_name: str
     asset_type: str
-    asset_variation: str
+    asset_variant: str
     location: str
     description: str | None = None
-    expiry_date: datetime | None = None
-    installation_date: datetime | None = None
-    last_service_date: datetime | None = None
+    expiry_date: date | None = None
+    installation_date: date | None = None
+    last_service_date: date | None = None
 
 class PropertyChecklistCreate(SQLModel):
     property_id: UUID
@@ -217,15 +216,14 @@ class TemplateVersionPublic(SQLModel):
 
 class PropertyAssetPublic(SQLModel):
     id: UUID
-    property_id: UUID
     asset_name: str
     asset_type: str
-    asset_variation: str
+    asset_variant: str
     location: str
     description: str | None = None
-    expiry_date: datetime | None = None
-    installation_date: datetime | None = None
-    last_service_date: datetime | None = None
+    expiry_date: date | None = None
+    installation_date: date | None = None
+    last_service_date: date | None = None
     is_active: bool
     created_at: datetime
 
@@ -288,11 +286,11 @@ class TemplateVersionUpdate(SQLModel):
 class PropertyAssetUpdate(SQLModel):
     asset_name: str | None = None
     asset_type: str | None = None
-    asset_variation: str | None = None
+    asset_variant: str | None = None
     location: str | None = None
     description: str | None = None
-    expiry_date: datetime | None = None
-    installation_date: datetime | None = None
-    last_service_date: datetime | None = None
+    expiry_date: date | None = None
+    installation_date: date | None = None
+    last_service_date: date | None = None
     is_active: bool | None = None
 
