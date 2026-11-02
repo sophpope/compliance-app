@@ -44,6 +44,7 @@ class ChecklistTemplates(SQLModel, table=True):
     account_id: UUID = Field(foreign_key="accounts.id", nullable=True)
     checklist_name: str = Field(nullable=False)
     description: str = Field(nullable=True)
+    visibility: str = Field(nullable=False)  # 'private' or 'public'
     is_default: bool = Field(default=False, nullable=False)
     is_active: bool = Field(default=True, nullable=False)
     created_at: datetime = Field(default_factory=lambda:datetime.now(timezone.utc), nullable=False)
@@ -131,6 +132,7 @@ class ChecklistTemplateCreate(SQLModel):
     account_id: UUID 
     checklist_name: str
     description: str | None = None
+    visibility: str # 'private' or 'public'
     is_default: bool = False
 
 class TemplateVersionCreate(SQLModel):
@@ -201,6 +203,7 @@ class ChecklistTemplatePublic(SQLModel):
     account_id: UUID | None = None
     checklist_name: str
     description: str | None = None
+    visibility: str
     is_default: bool
     is_active: bool
     created_at: datetime
@@ -275,6 +278,7 @@ class ProfileUpdate(SQLModel):
 class ChecklistTemplateUpdate(SQLModel):
     checklist_name: str | None = None
     description: str | None = None
+    visibility: str # 'private' or 'public'
     is_default: bool | None = None
     is_active: bool | None = None
 
