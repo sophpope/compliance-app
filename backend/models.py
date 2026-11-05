@@ -204,7 +204,6 @@ class ChecklistTemplatePublic(SQLModel):
     checklist_name: str
     description: str | None = None
     visibility: str
-    is_default: bool
     is_active: bool
     created_at: datetime
 
@@ -279,7 +278,6 @@ class ChecklistTemplateUpdate(SQLModel):
     checklist_name: str | None = None
     description: str | None = None
     visibility: str # 'private' or 'public'
-    is_default: bool | None = None
     is_active: bool | None = None
 
 class TemplateVersionUpdate(SQLModel):
