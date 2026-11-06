@@ -129,11 +129,9 @@ class PropertyCreate(SQLModel):
     description: str | None = None
 
 class ChecklistTemplateCreate(SQLModel):
-    account_id: UUID 
     checklist_name: str
     description: str | None = None
     visibility: str # 'private' or 'public'
-    is_default: bool = False
 
 class TemplateVersionCreate(SQLModel):
     template_id: UUID
@@ -277,7 +275,7 @@ class ProfileUpdate(SQLModel):
 class ChecklistTemplateUpdate(SQLModel):
     checklist_name: str | None = None
     description: str | None = None
-    visibility: str # 'private' or 'public'
+    visibility: str | None = None # 'private' or 'public'
     is_active: bool | None = None
 
 class TemplateVersionUpdate(SQLModel):
