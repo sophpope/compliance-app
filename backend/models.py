@@ -1,7 +1,8 @@
 from uuid import UUID, uuid4
 from datetime import datetime, timezone, date
 
-from sqlmodel import SQLModel, Field
+from sqlmodel import SQLModel, Field, Column
+from sqlalchemy.dialects.postgresql import JSONB
 
 class Accounts(SQLModel, table=True):
     __tablename__ = "accounts"
@@ -56,7 +57,7 @@ class TemplateVersions(SQLModel, table=True):
     template_id: UUID = Field(foreign_key="checklist_templates.id", nullable=False)
     version_number: int = Field(nullable=False)
     status: str = Field(nullable=False)
-    template_data: str = Field(nullable=False)  # JSONB data as string
+    template_data: dict = Field(sa_column=Column(JSONB, nullable=False))  # JSONB data as dict
     created_by: UUID = Field(foreign_key="profiles.id", nullable=False)
     created_at: datetime = Field(default_factory=lambda:datetime.now(timezone.utc), nullable=False)
 
@@ -134,11 +135,9 @@ class ChecklistTemplateCreate(SQLModel):
     visibility: str # 'private' or 'public'
 
 class TemplateVersionCreate(SQLModel):
-    template_id: UUID
     version_number: int
     status: str
-    template_data: str  # JSONB data as string
-    created_by: UUID
+    template_data: dict  # JSONB data as dict
 
 class PropertyAssetCreate(SQLModel):
     asset_name: str
@@ -210,7 +209,7 @@ class TemplateVersionPublic(SQLModel):
     template_id: UUID
     version_number: int
     status: str
-    template_data: str  # JSONB data as string
+    template_data: dict  # JSONB data as dict
     created_by: UUID
     created_at: datetime
 
@@ -281,7 +280,7 @@ class ChecklistTemplateUpdate(SQLModel):
 class TemplateVersionUpdate(SQLModel):
     version_number: int | None = None
     status: str | None = None
-    template_data: str | None = None
+    template_data: dict | None = None
 
 class PropertyAssetUpdate(SQLModel):
     asset_name: str | None = None
