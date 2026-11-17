@@ -209,3 +209,35 @@ def update_template_version(
     except Exception as e:
         print("UPDATE TEMPLATE VERSION ERROR:", repr(e))
         raise HTTPException(status_code=400, detail="Unable to update template version")
+    
+@router.get('/templates/{template_id}/versions', response_model=list[models.TemplateVersionPublic])
+def get_template_versions(template_id: UUID, current_profile: CurrentProfileDep, session: SessionDep):
+    try:
+        template = session.exec(
+            select(models.ChecklistTemplates)
+            .where(
+                models.ChecklistTemplates.id == template_id,
+                or_(models.ChecklistTemplates.account_id == current_profile.account_id, 
+                    models.ChecklistTemplates.visibility == 'public', 
+                    models.ChecklistTemplates.is_default == True
+                ),
+                models.ChecklistTemplates.is_active == True
+            )
+        ).first()
+        
+        if template is None:
+            raise HTTPException(status_code=404, detail="Template not found")
+        
+        versions = session.exec(
+            select(models.TemplateVersions)
+            .where(
+                models.TemplateVersions.template_id == template_id,
+                models.ChecklistTemplates.is_active == True
+            )
+        ).all()
+        
+        return versions
+    except Exception as e:
+        print("GET TEMPLATE VERSIONS ERROR:", repr(e))
+        raise HTTPException(status_code=500, detail="Unable to retrieve template versions")
+    
